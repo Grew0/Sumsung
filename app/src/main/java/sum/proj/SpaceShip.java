@@ -28,11 +28,11 @@ public class SpaceShip {
 
     boolean onDelete=false;
 
-    /*TODO: delete*/ //int color_of_radius = Color.WHITE;
+    /*TODO: delete*/ int color_of_radius = Color.WHITE;
 
 
     SpaceShip(){
-        int a[][] = new int[100][1];
+        int a[][] = new int[4][2];
         for(int i=0;i<a.length;i++)
             for(int j=0;j<a[i].length;j++)
                 a[i][j] = (int)(Math.random()*5+1);
@@ -82,13 +82,13 @@ public class SpaceShip {
         canvas.rotate(-angle);
 
         p.setColor(Color.rgb(100, 100, 100));
-        //Paint cirpaint = new Paint();
+        Paint cirpaint = new Paint();
 
-        //cirpaint.setColor(color_of_radius);
-        //canvas.drawCircle(mass_x, mass_y, radius, cirpaint);
-        //color_of_radius = Color.argb(50, 255, 255, 255);
+        cirpaint.setColor(color_of_radius);
+        canvas.drawCircle(mass_x, mass_y, radius, cirpaint);
+        color_of_radius = Color.argb(50, 255, 255, 255);
 
-        //cirpaint.setColor(Color.argb(50, 0, 255, 0));
+        cirpaint.setColor(Color.argb(50, 0, 255, 0));
         for(int i=0;i<mat.length;i++)
             for(int j=0;j<mat[i].length;j++){
                 if(mat[i][j] != null){
@@ -110,7 +110,6 @@ public class SpaceShip {
     }
 
     void upd(MainGame mainGame, Canvas canvas){
-        ddx = 0;ddy = 0;ddan = 0;
         boolean onPossibleDelete = true;
         boolean need_to_crack = false;
         for(int i=0;i<mat.length;i++){
@@ -183,10 +182,10 @@ public class SpaceShip {
         if(dan > friction){ dan -= friction;
         }else if(dan < -friction){dan += friction;
         }else dan = 0;
+        ddx = 0;ddy = 0;ddan = 0;
 
         // Tearing apart
         if(need_to_crack){
-            Log.d("DEBUG", this.toString());
             crack(mainGame);
         }
         onDelete |= onPossibleDelete;
@@ -198,14 +197,14 @@ public class SpaceShip {
     }
 
     void apply_force(float X, float Y, float force_x, float force_y, Canvas canvas) {
-        ddx += force_x / mass; // F = m*a =>  a = F/m
+        ddx += force_x / mass; // F = m*a  |=>  a = F/m
         ddy += force_y / mass;
         Paint paint = new Paint();
         paint.setStrokeWidth(5);
-        ///canvas.drawLine(0, 0, X, Y, paint);
+        //canvas.drawLine(0, 0, X, Y, paint);
         paint.setStrokeWidth(3.5F);
         paint.setColor(Color.WHITE);
-        ///canvas.drawLine(X, Y, X+force_x*100, Y+force_y*100, paint);
+        //canvas.drawLine(X, Y, X+force_x*100, Y+force_y*100, paint);
 
         float moment = (force_x*Y) - (force_y*X);
         ddan += 0.03*moment / mass;
@@ -250,29 +249,30 @@ public class SpaceShip {
         return blMap;
     }
 
-    public void xBullet(Bullet bullet, Player player, Canvas canvas) {
+    public void xBullet(Bullet bullet,/*todo delete*/ Player player, Canvas canvas) {
         if(Round.Round_x_Round(bullet.x, bullet.y, 2, x, y, radius)){
-            //color_of_radius = Color.argb(150, 255, 0, 0);
+            color_of_radius = Color.argb(150, 255, 0, 0);
             for(int i=0;i<mat.length;i++){
                 for(int j=0;j<mat[i].length;j++){
                     if(mat[i][j] != null){
                         float xn, yn;
                         {
-                            float _x = (float) Math.cos(-angle * 3.1415 / 180);
-                            float _y = (float) Math.sin(-angle * 3.1415 / 180);
                             float x = (i + 0.5f - mass_x) * Block.size, y = (j + 0.5f - mass_y) * Block.size;
                             float cosa = (float) Math.cos(-angle * 3.14 / 180), sina = (float) Math.sin(-angle * 3.14 / 180);
                             xn = x * cosa - y * sina;
                             yn = y * cosa + x * sina;
                         }
-                        float   dx= x-player.x+xn,
-                                dy= y-player.y+yn;
+                        float   dx= x+xn,
+                                dy= y+yn;
                         if(Round.Round_x_Round(bullet.x, bullet.y, 2, dx, dy, Block.size/2)){
-                            Paint cirpaint = new Paint();
-                            cirpaint.setColor(Color.argb(150, 255, 0, 0));
-                            canvas.drawCircle(dx, dy, Block.size/2, cirpaint);
                             mat[i][j].getDamage(50);
                             bullet.toDelete=true;
+
+                            //Todo: delete (
+                            Paint cirpaint = new Paint();
+                            cirpaint.setColor(Color.argb(150, 255, 0, 0));
+                            canvas.drawCircle(dx+player.x, dy+player.y, Block.size/2, cirpaint);
+                            //)
                         }
                     }
                 }
@@ -364,9 +364,42 @@ public class SpaceShip {
         return ans;
     }
 
-    public void xShip(SpaceShip other) {
+    public void xShip(SpaceShip other, Canvas canvas, Player pl) {
         if(Round.Round_x_Round(x+mass_x, y+mass_y, radius, other.x+other.mass_x, other.y+other.mass_y, other.radius)){
+            for(int i=0;i<mat.length;i++){
+                for(int j=0;j<mat[i].length;j++){
+                    Paint paint = new Paint();
+                    paint.setColor(Color.argb(100, 255, 0, 0));
+                    float cosa = (float) Math.cos(-angle * 3.14 / 180), sina = (float) Math.sin(-angle * 3.14 / 180);
+                    float   shift_x = (i+0.5f-mass_x)*Block.size * cosa - (j+0.5f-mass_y)*Block.size * sina,
+                            shift_y = (j+0.5f-mass_y)*Block.size * cosa + (i+0.5f-mass_x)*Block.size * sina;
+                    //canvas.drawCircle(x+shift_x-pl.x, y+shift_y-pl.y, Block.size>>1, paint);
+                    other.xBlock(mat[i][j], x+shift_x, y+shift_y, this, pl, canvas);
 
+                }
+            }
+        }
+    }
+
+    private void xBlock(Block block, float obx, float oby, SpaceShip other, Player pl, Canvas canvas) {
+        for(int i=0;i<mat.length;i++){
+            for(int j=0;j<mat[i].length;j++){
+                Paint paint = new Paint();
+                paint.setColor(Color.argb(100, 0, 255, 0));
+                float cosa = (float) Math.cos(-angle * 3.14 / 180), sina = (float) Math.sin(-angle * 3.14 / 180);
+                float   shift_x = (i+0.5f-mass_x)*Block.size * cosa - (j+0.5f-mass_y)*Block.size * sina,
+                        shift_y = (j+0.5f-mass_y)*Block.size * cosa + (i+0.5f-mass_x)*Block.size * sina;
+                //canvas.drawCircle(x+shift_x-pl.x, y+shift_y-pl.y, Block.size>>1, paint);
+                float bx = x+shift_x, by = y+shift_y;
+                if(Round.Round_x_Round(obx, oby, Block.size>>1, bx, by, Block.size>>1)){
+                    float force_x=bx-obx, force_y=by-oby;
+                    float len_of_force_vector = (float) Math.sqrt(force_x*force_x+force_y*force_y);
+                    force_x *= (Block.size-len_of_force_vector)/len_of_force_vector;
+                    force_y *= ((Block.size - len_of_force_vector) / len_of_force_vector);
+                    this.apply_force(bx-x, by-y, force_x*10, force_y*10, canvas);
+                    other.apply_force(obx-other.x, oby-other.y, -force_x*10, -force_y*10, canvas);
+                }
+            }
         }
     }
 }
