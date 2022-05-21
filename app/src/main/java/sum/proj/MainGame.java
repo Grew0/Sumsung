@@ -54,7 +54,13 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
         if(player == null)player = new Player();
         ships.add(player);
 
-        ships.add(new SpaceShip());
+        ships.add(new SpaceShip(){
+            @Override
+            void upd(MainGame mainGame, Canvas canvas) {
+                super.upd(mainGame, canvas);
+                //if(this.mat != null) this.mat[1][0].activate((byte) (255-127));
+            }
+        });
         ships.get(1).setPosition(0, -150, 0);
         ships.get(1).loadFromFile("Player");
 
@@ -88,11 +94,9 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
                     switch (i) {
                         case 0:
                             nscl *= 0.9;
-                            //scale_parameter *= 0.9;
                             break;
                         case 1:
                             nscl /= 0.9;
-                            //scale_parameter /= 0.9;
                             break;
                     }
                 }
@@ -141,7 +145,12 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
                         for(SpaceShip ship: ships) {
                             ship.draw(canvas, player, scale_parameter);
                         }
-                        //canvas.rotate(player.angle);
+
+                        // Отрисовка пуль
+                        canvas.translate(-player.x, -player.y);
+                        for(Bullet bullet: bullets){ bullet.draw(canvas); }
+                        canvas.translate(player.x, player.y);
+
                         canvas.rotate(-player.angle);
 
                         canvas.translate((-width>>1)/scale_parameter, (-height>>1)/scale_parameter);
@@ -162,8 +171,6 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
                         canvas.rotate(player.angle);
 
 
-                        // Отрисовка пуль
-                        for(Bullet bullet: bullets){ bullet.draw(canvas); }
 
 
                         //

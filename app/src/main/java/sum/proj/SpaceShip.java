@@ -1,7 +1,5 @@
 package sum.proj;
 
-// TODO check out
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -142,6 +140,8 @@ public class SpaceShip {
                                 float x = (i + 0.5f - mass_x) * Block.size, y = (j + 0.5f - mass_y) * Block.size;
                                 float cosa = (float) Math.cos(-angle * 3.14 / 180), sina = (float) Math.sin(-angle * 3.14 / 180);
                                 float xn = x * cosa - y * sina, yn = y * cosa + x * sina;
+                                xn += this.x;
+                                yn += this.y;
                                 ((GunBlock)mat[i][j]).timeDelay = GunBlock.shoutDelay;
                                 mainGame.bullets.add(new Bullet(
                                         xn+Block.size*0.45f*_x+Block.size*0.3f*_y, yn+Block.size*0.45f*_y-Block.size*0.3f*_x, speed*_x, speed*_y));
@@ -251,7 +251,7 @@ public class SpaceShip {
     }
 
     public void xBullet(Bullet bullet, Player player, Canvas canvas) {
-        if(Round.Round_x_Round(bullet.x, bullet.y, 2, x-player.x, y-player.y, radius)){
+        if(Round.Round_x_Round(bullet.x, bullet.y, 2, x, y, radius)){
             //color_of_radius = Color.argb(150, 255, 0, 0);
             for(int i=0;i<mat.length;i++){
                 for(int j=0;j<mat[i].length;j++){
@@ -267,8 +267,8 @@ public class SpaceShip {
                         }
                         float   dx= x-player.x+xn,
                                 dy= y-player.y+yn;
-                        Paint cirpaint = new Paint();
                         if(Round.Round_x_Round(bullet.x, bullet.y, 2, dx, dy, Block.size/2)){
+                            Paint cirpaint = new Paint();
                             cirpaint.setColor(Color.argb(150, 255, 0, 0));
                             canvas.drawCircle(dx, dy, Block.size/2, cirpaint);
                             mat[i][j].getDamage(50);
