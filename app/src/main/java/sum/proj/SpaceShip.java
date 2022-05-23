@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import javax.security.auth.callback.Callback;
 
 public class SpaceShip {
+    char type = 'S';
     static MainActivity mainActivity;
 
     Block [][] mat = null;
@@ -43,7 +44,10 @@ public class SpaceShip {
         mat = new Block[MAT.length][MAT[0].length];
         for(int i=0;i<mat.length;i++){
             for(int j=0;j<mat[i].length;j++) {
-                mat[i][j] = Block.parseBlock(MAT[i][j]);
+                if(MAT[i][j] == 0)
+                    mat[i][j] = null;
+                else
+                    mat[i][j] = Block.parseBlock(MAT[i][j]);
             }
         }
         massPoint();
@@ -141,7 +145,7 @@ public class SpaceShip {
                                 float xn = x * cosa - y * sina, yn = y * cosa + x * sina;
                                 xn += this.x;
                                 yn += this.y;
-                                ((GunBlock)mat[i][j]).timeDelay = GunBlock.shoutDelay;
+                                ((GunBlock)mat[i][j]).timeDelay = ((GunBlock)mat[i][j]).shoutDelay;
                                 mainGame.bullets.add(new Bullet(
                                         xn+Block.size*0.45f*_x+Block.size*0.3f*_y, yn+Block.size*0.45f*_y-Block.size*0.3f*_x, speed*_x, speed*_y));
                                 mainGame.bullets.add(new Bullet(

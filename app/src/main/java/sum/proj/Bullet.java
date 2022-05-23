@@ -9,6 +9,8 @@ public class Bullet {
     static Paint paint = null;
     boolean toDelete = false;
 
+    int time_bef_del=10000;
+
     public Bullet(float x, float y, float dx, float dy) {
         this.x = x+dx;
         this.y = y+dy;
@@ -26,6 +28,7 @@ public class Bullet {
     }
 
     public void upd() {
+        if(--time_bef_del<1)toDelete = true;
         x += dx;
         y += dy;
     }

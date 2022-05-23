@@ -83,6 +83,8 @@ public class Block {
         is_activated = ((buttons+127) & (activation_condition+127))>0;
     }
 
+    void activate(){ is_activated = true; }
+
     static void update_all_blocks(){
         timer = (timer+1)%600;
     }
@@ -157,7 +159,7 @@ class EnergyShieldBlock extends Block{
 }
 
 class GunBlock extends Block{
-    static int shoutDelay=3;
+    int shoutDelay=3;
     int timeDelay=0;
     GunBlock(){ mass = 25; }
 

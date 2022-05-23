@@ -16,6 +16,10 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
     ArrayList<SpaceShip> ships = new ArrayList<>();
     Player player;
 
+    int before_adding_a_new_enemy=0;
+    int period_of_adding_new_enemies=1000;
+
+
     MainThread thr;
     MainActivity act;
     ArrayList<MyButton> buttons = new ArrayList<>();
@@ -55,7 +59,7 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
         player.setPosition(0, 150, 0);
         ships.add(player);
 
-        ships.add(new SpaceShip(){
+        ships.add(new SimEnemy(){
             @Override
             void upd(MainGame mainGame, Canvas canvas) {
                 super.upd(mainGame, canvas);
@@ -65,7 +69,7 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
         ships.get(1).setPosition(0, -150, 0);
         //ships.get(1).loadFromFile("Player");
 
-        ships.add(new SpaceShip());
+        ships.add(new SimEnemy());
         ships.get(1).setPosition(150, -150, 0);
 
         thr = new MainThread(getHolder());
@@ -185,23 +189,31 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
                         Block.update_all_blocks();
                         // Обновление кораблей
                         for(int i=ships.size()-1;i>=0;i--) {
-
                             SpaceShip ship = ships.get(i);
+                            Log.d("TAG", "" + ship.getClass());
                             //try{
                             ship.upd(MainGame.this, canvas);
                             //}catch (Exception e){e.printStackTrace();}
-
                             for(Bullet bullet: bullets){
                                 ship.xBullet(bullet, player, canvas);
                             }
                             for(int j=0;j<i;j++){
                                 ship.xShip(ships.get(j), canvas, player);
                             }
+
                             if(ship.onDelete){
                                 ships.set(i, ships.get(ships.size()-1));
                                 ships.remove(ships.size()-1);
                             }
+
+                            if(ship.type == 'E'){
+                                try {
+                                    ((Enemy)ship).attack(player);
+                                }finally {}
+                            }
+
                         }
+
 
                         // Обновление пуль
                         for(Bullet bullet: bullets){ bullet.upd(); }
@@ -211,6 +223,24 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
                                 bullets.remove(bullets.get(bullets.size()-1));
                             }
                         }
+                        // Обновление появления врагов
+
+
+                        int before_adding_a_new_enemy=0;
+                        int period_of_adding_new_enemies=1000000;
+
+                        if((before_adding_a_new_enemy<=0 || ships.size() == 1) && ships.size() < 4){
+                            ships.add(new SimEnemy());
+                            float angle= (float) (Math.random()*6.28), distance = (float) (400 + Math.random()*100);
+                            ships.get(ships.size()-1).setPosition(
+                                    (float) (player.x+distance*Math.cos(angle)),
+                                    (float) (player.y+distance*Math.sin(angle)),
+                                    (float) (Math.random()*360));
+                            before_adding_a_new_enemy = period_of_adding_new_enemies;
+                            period_of_adding_new_enemies --;
+                        }
+                        before_adding_a_new_enemy --;
+
                     }finally{
                         surfaceHolder.unlockCanvasAndPost(canvas);
                     }
