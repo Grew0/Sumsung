@@ -7,6 +7,8 @@ import android.util.Log;
 
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -156,6 +158,8 @@ public class SpaceShip {
                     }
                     mat[i][j].update_this_block();
                     if(mat[i][j].hp <= 0){
+                        if(type != 'P')
+                        mainGame.act.plRes.add(mat[i][j].res);
                         mat[i][j] = null;
                         need_to_crack = true;
                         //crack(mainGame);
@@ -251,6 +255,26 @@ public class SpaceShip {
             }
         } catch (Exception e) { e.printStackTrace(); }
         return blMap;
+    }
+
+    void saveInFile(String name){
+        File file = new File(mainActivity.getFilesDir(), name + ".txt");
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(file));
+            /// На каждой строке - x, y, Block - (type, rotation, activation condition)
+            String s = "";
+            for(int i=0;i<mat.length;i++)
+                for(int j=0;j<mat[i].length;j++){
+                    if(mat[i][j] == null)continue;
+                    s += i + " " + j + " ";
+                    s += mat[i][j].getType() + " ";
+                    s += mat[i][j].rot + " ";
+                    s += mat[i][j].activation_condition + "\n";
+                }
+            out.printf("%x", 255); //Записываем текст в файл
+            out.close();
+        } catch (Exception e) { e.printStackTrace(); }
+
     }
 
     public void xBullet(Bullet bullet,/*todo delete*/ Player player, Canvas canvas) {

@@ -117,6 +117,7 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
 
     public void stop() {
         thr.requestStop();
+        player.saveInFile("Player");
     }
 
 
@@ -166,13 +167,16 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
                         for(MyButton btn: buttons)
                             btn.draw(canvas, false, 1/scale_parameter);
 
+                        /// Отрисовка ресурсов
+                        act.plRes.draw(canvas);
+
                         /// todo del
-                        /*for(int i=0;i<ships.size();i++) {
+                        /*/for(int i=0;i<ships.size();i++) {
                             Paint paint = new Paint();
                             paint.setColor(Color.WHITE);
                             paint.setTextSize(40);
                             canvas.drawText(ships.get(i).toString(), 0, 40+i*50, paint);
-                        }*/
+                        }/**/
                         /// end todo
 
                         canvas.translate((width>>1)/scale_parameter, (height>>1)/scale_parameter);
