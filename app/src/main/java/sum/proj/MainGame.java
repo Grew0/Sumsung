@@ -196,7 +196,6 @@ public class MainGame extends SurfaceView implements SurfaceHolder.Callback, Vie
                         // Обновление кораблей
                         for(int i=ships.size()-1;i>=0;i--) {
                             SpaceShip ship = ships.get(i);
-                            Log.d("TAG", "" + ship.getClass());
                             //try{
                             ship.upd(MainGame.this, canvas);
                             //}catch (Exception e){e.printStackTrace();}

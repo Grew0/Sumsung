@@ -14,7 +14,7 @@ public class PlayerResources {
     }
 
     void load(SharedPreferences preferences){
-        iron = preferences.getInt("Iron", 0);
+        iron = preferences.getInt("Iron", 100);
     }
 
     void save(SharedPreferences preferences){

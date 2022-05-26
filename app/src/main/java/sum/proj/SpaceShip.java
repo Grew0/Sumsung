@@ -33,7 +33,7 @@ public class SpaceShip {
 
     boolean onDelete=false;
 
-    /*TODO: delete*/ int color_of_radius = Color.WHITE;
+    ///*TODO: delete*/ int color_of_radius = Color.WHITE;
 
 
     SpaceShip(){
@@ -79,6 +79,7 @@ public class SpaceShip {
             radius = (float) Math.max(radius, Math.hypot(mass_x, mat[0].length-mass_y));
             radius = (float) Math.max(radius, Math.hypot(mat.length-mass_x, mat[0].length-mass_y));
         }catch (Exception e){}
+        radius += 2;
         radius *= Block.size;
     }
 
@@ -90,13 +91,13 @@ public class SpaceShip {
         canvas.rotate(-angle);
 
         p.setColor(Color.rgb(100, 100, 100));
-        Paint cirpaint = new Paint();
+        //Paint cirpaint = new Paint();
 
-        cirpaint.setColor(color_of_radius);
-        canvas.drawCircle(mass_x, mass_y, radius, cirpaint);
-        color_of_radius = Color.argb(50, 255, 255, 255);
+        //cirpaint.setColor(color_of_radius);
+        //canvas.drawCircle(mass_x, mass_y, radius, cirpaint);
+        //color_of_radius = Color.argb(50, 255, 255, 255);
 
-        cirpaint.setColor(Color.argb(50, 0, 255, 0));
+        //cirpaint.setColor(Color.argb(50, 0, 255, 0));
         for(int i=0;i<mat.length;i++)
             for(int j=0;j<mat[i].length;j++){
                 if(mat[i][j] != null){
@@ -302,10 +303,38 @@ public class SpaceShip {
 
     public void xBullet(Bullet bullet,/*todo delete*/ Player player, Canvas canvas) {
         if(Round.Round_x_Round(bullet.x, bullet.y, 2, x, y, radius)){
-            color_of_radius = Color.argb(150, 255, 0, 0);
+            //color_of_radius = Color.argb(150, 255, 0, 0);
             for(int i=0;i<mat.length;i++){
                 for(int j=0;j<mat[i].length;j++){
                     if(mat[i][j] != null){
+                        if(mat[i][j].getType() == 4 && mat[i][j].is_activated){ /// Shield
+                                for(int q=-1;q<=1;q++){
+                                    int I=i, J=j;
+                                    if((mat[i][j].rot&1) == 0){
+                                        J += mat[i][j].rot - 1;
+                                        I += q;
+                                    }else{
+                                        I += 2 - mat[i][j].rot;
+                                        J += q;
+                                    }
+                                    //canvas.drawCircle(I*Block.size+x, J*Block.size+y, Block.size/2, new Paint());
+                                    float xn, yn;
+                                    {
+                                        float x = (I + 0.5f - mass_x) * Block.size, y = (J + 0.5f - mass_y) * Block.size;
+                                        float cosa = (float) Math.cos(-angle * 3.14 / 180), sina = (float) Math.sin(-angle * 3.14 / 180);
+                                        xn = x * cosa - y * sina;
+                                        yn = y * cosa + x * sina;
+                                    }
+                                    float dx = x + xn,
+                                            dy = y + yn;
+                                    if(Round.Round_x_Round(bullet.x, bullet.y, 2, dx, dy, Block.size / 2)) {
+                                        Log.d("TAG", "YES");
+                                        bullet.toDelete = true;
+                                        return;
+                                    }
+                                }
+                        }
+
                         float xn, yn;
                         {
                             float x = (i + 0.5f - mass_x) * Block.size, y = (j + 0.5f - mass_y) * Block.size;
@@ -320,10 +349,11 @@ public class SpaceShip {
                             bullet.toDelete=true;
 
                             //Todo: delete (
-                            Paint cirpaint = new Paint();
-                            cirpaint.setColor(Color.argb(150, 255, 0, 0));
-                            canvas.drawCircle(dx+player.x, dy+player.y, Block.size/2, cirpaint);
+                            //Paint cirpaint = new Paint();
+                            //cirpaint.setColor(Color.argb(150, 255, 0, 0));
+                            //canvas.drawCircle(dx+player.x, dy+player.y, Block.size/2, cirpaint);
                             //)
+                            return;
                         }
                     }
                 }
