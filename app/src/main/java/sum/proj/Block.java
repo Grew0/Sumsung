@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import android.util.Log;
 
 public class Block {
+    PlayerResources res = new PlayerResources().setIron(0);
     Block() {}
 
     static Bitmap bpm;
@@ -83,6 +84,8 @@ public class Block {
         is_activated = ((buttons+127) & (activation_condition+127))>0;
     }
 
+    void activate(){ is_activated = true; }
+
     static void update_all_blocks(){
         timer = (timer+1)%600;
     }
@@ -104,7 +107,10 @@ public class Block {
 }
 
 class DefenceBlock extends Block{
-    DefenceBlock(){ mass = 15; }
+    DefenceBlock(){
+        mass = 15;
+        res.setIron(25);
+    }
 
     @Override
     void draw(int i, int j, float dx, float dy, Canvas canvas, Paint paint) {
@@ -118,7 +124,10 @@ class DefenceBlock extends Block{
 }
 
 class EngineBlock extends Block{
-    EngineBlock(){ mass = 25; }
+    EngineBlock(){
+        mass = 25;
+        res.setIron(45);
+    }
 
     @Override
     void draw(int i, int j, float dx, float dy, Canvas canvas, Paint paint) {
@@ -135,7 +144,10 @@ class EngineBlock extends Block{
 }
 
 class EnergyShieldBlock extends Block{
-    EnergyShieldBlock(){ mass = 25; }
+    EnergyShieldBlock(){
+        mass = 25;
+        res.setIron(65);
+    }
 
     @Override
     int getType() {
@@ -157,9 +169,12 @@ class EnergyShieldBlock extends Block{
 }
 
 class GunBlock extends Block{
-    static int shoutDelay=3;
+    int shoutDelay=3;
     int timeDelay=0;
-    GunBlock(){ mass = 25; }
+    GunBlock(){
+        mass = 25;
+        res.setIron(65);
+    }
 
     @Override
     int getType() {
@@ -185,7 +200,10 @@ class GunBlock extends Block{
 }
 
 class ControllerBlock extends Block{
-    ControllerBlock(){ mass = 35; }
+    ControllerBlock(){
+        mass = 35;
+        res.setIron(100);
+    }
 
     @Override
     int getType() {

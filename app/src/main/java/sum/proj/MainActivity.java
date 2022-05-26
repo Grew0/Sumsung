@@ -15,6 +15,8 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
+    PlayerResources plRes = new PlayerResources();
+
     public enum viewsChoose{mainMenu, world, masterRoom};
     viewsChoose  nowChoose = mainMenu;
     MainGame mainGame;
@@ -25,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
         /// Загрузка изображения блоков и кнопок
         Block.loadPicture(getResources());
         MyButton.loadPicture(getResources());
+
+        /// Загрузка ресурсов игрока
+        plRes.load(getPreferences(MODE_PRIVATE));
+
 
         SpaceShip.mainActivity = this;
 
@@ -39,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(masterRoom != null)masterRoom.stop();
-        if(mainGame != null)mainGame.stop();
+        if(mainGame != null && nowChoose == world){
+            mainGame.stop();
+            plRes.save(getPreferences(MODE_PRIVATE));
+        }
         if(keyCode == event.KEYCODE_BACK){
             switch (nowChoose){
                 case mainMenu:

@@ -118,11 +118,18 @@ public class MasterRoom extends View implements View.OnTouchListener {
                                     chosenBlock.rot = (byte) ((chosenBlock.rot + 1) % 4);
                                     break;
                                 case 14:
-                                    chosenBlock = Block.parseBlock(chosenBlock.getType() - 1);
+                                    if(chosenBlock.getType()-1 < 1)
+                                        chosenBlock = Block.parseBlock(5);
+                                    else
+                                        chosenBlock = Block.parseBlock(chosenBlock.getType() - 1);
                                     parse_type = (byte) chosenBlock.getType();
                                     break;
                                 case 15:
-                                    chosenBlock = Block.parseBlock(chosenBlock.getType() + 1);
+                                    if(chosenBlock.getType()+1 > 5)
+                                        chosenBlock = Block.parseBlock(1);
+                                    else
+                                        chosenBlock = Block.parseBlock(chosenBlock.getType() + 1);
+
                                     parse_type = (byte) chosenBlock.getType();
                                     break;
                             }
@@ -160,9 +167,16 @@ public class MasterRoom extends View implements View.OnTouchListener {
                         case push:
                             Block bl = Block.parseBlock(chosenBlock.getType());
                             bl.rot = chosenBlock.rot;
-                            blocks.put(pos, bl);
+                            try {
+                                context.plRes.add(blocks.get(pos).res);
+                            }catch (Exception e){}
+                            if(context.plRes.sub(bl.res))
+                                blocks.put(pos, bl);
                             break;
                         case delete:
+                            try {
+                                context.plRes.add(blocks.get(pos).res);
+                            }catch (Exception e){}
                             blocks.remove(pos);
                             break;
                         case edit:
@@ -227,6 +241,8 @@ public class MasterRoom extends View implements View.OnTouchListener {
                 buttons.get(i).draw(canvas, chosenBlock.getActivate(i-4), scale_param);
             }
         }
+
+
         if(mode == Mode.push){
             for (int i = 4+8; i < buttons.size(); i++) {
                 buttons.get(i).draw(canvas, false, scale_param);
@@ -238,7 +254,17 @@ public class MasterRoom extends View implements View.OnTouchListener {
             canvas.scale(time_scl, time_scl);
             chosenBlock.draw(0, 0, -1, -1, canvas, new Paint());
             canvas.scale(1/time_scl, 1/time_scl);
+
+            canvas.scale(scale_param, scale_param);
+            canvas.translate(0, 3*realsize);
+            context.plRes.draw(canvas);
+            canvas.translate(0, -3*realsize);
+            canvas.scale(1.0f/scale_param, 1.0f/scale_param);
+
         }
+
+
+
         canvas.translate(w/2, h/2);
     }
 

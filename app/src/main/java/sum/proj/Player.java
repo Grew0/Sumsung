@@ -8,6 +8,7 @@ public class Player extends  SpaceShip{
     int width, height;
 
     public Player(){
+        type = 'P';
         loadFromFile("Player");
         setPosition(0, 0, 0);
     }

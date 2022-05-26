@@ -1,5 +1,6 @@
 package sum.proj;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,6 +8,9 @@ import android.util.Log;
 
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -14,6 +18,7 @@ import java.util.TreeMap;
 import javax.security.auth.callback.Callback;
 
 public class SpaceShip {
+    char type = 'S';
     static MainActivity mainActivity;
 
     Block [][] mat = null;
@@ -43,7 +48,10 @@ public class SpaceShip {
         mat = new Block[MAT.length][MAT[0].length];
         for(int i=0;i<mat.length;i++){
             for(int j=0;j<mat[i].length;j++) {
-                mat[i][j] = Block.parseBlock(MAT[i][j]);
+                if(MAT[i][j] == 0)
+                    mat[i][j] = null;
+                else
+                    mat[i][j] = Block.parseBlock(MAT[i][j]);
             }
         }
         massPoint();
@@ -141,7 +149,7 @@ public class SpaceShip {
                                 float xn = x * cosa - y * sina, yn = y * cosa + x * sina;
                                 xn += this.x;
                                 yn += this.y;
-                                ((GunBlock)mat[i][j]).timeDelay = GunBlock.shoutDelay;
+                                ((GunBlock)mat[i][j]).timeDelay = ((GunBlock)mat[i][j]).shoutDelay;
                                 mainGame.bullets.add(new Bullet(
                                         xn+Block.size*0.45f*_x+Block.size*0.3f*_y, yn+Block.size*0.45f*_y-Block.size*0.3f*_x, speed*_x, speed*_y));
                                 mainGame.bullets.add(new Bullet(
@@ -152,6 +160,8 @@ public class SpaceShip {
                     }
                     mat[i][j].update_this_block();
                     if(mat[i][j].hp <= 0){
+                        if(type != 'P')
+                        mainGame.act.plRes.add(mat[i][j].res.multiply(0.34f));
                         mat[i][j] = null;
                         need_to_crack = true;
                         //crack(mainGame);
@@ -247,6 +257,47 @@ public class SpaceShip {
             }
         } catch (Exception e) { e.printStackTrace(); }
         return blMap;
+    }
+
+    void saveInFile(String name){
+        /*File file = new File(mainActivity.getFilesDir(), name + ".txt");
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(file));
+            /// На каждой строке - x, y, Block - (type, rotation, activation condition)
+            String s = "";
+            for(int i=0;i<mat.length;i++)
+                for(int j=0;j<mat[i].length;j++){
+                    if(mat[i][j] == null)continue;
+                    s += i + " " + j + " ";
+                    s += mat[i][j].getType() + " ";
+                    s += mat[i][j].rot + " ";
+                    s += mat[i][j].activation_condition + "\n";
+                }
+            out.printf("%x", 255); //Записываем текст в файл
+            out.close();
+        } catch (Exception e) { e.printStackTrace(); }
+        */
+
+        FileOutputStream outputStream;
+        try {
+            outputStream = mainActivity.openFileOutput("Player.txt", Context.MODE_PRIVATE);
+            //String string = "";
+            String s = "";
+            for(int i=0;i<mat.length;i++)
+                for(int j=0;j<mat[i].length;j++){
+                    if(mat[i][j] == null)continue;
+                    s += i + " " + j + " ";
+                    s += mat[i][j].getType() + " ";
+                    s += mat[i][j].rot + " ";
+                    s += mat[i][j].activation_condition + "\n";
+                }
+            outputStream.write(s.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public void xBullet(Bullet bullet,/*todo delete*/ Player player, Canvas canvas) {
