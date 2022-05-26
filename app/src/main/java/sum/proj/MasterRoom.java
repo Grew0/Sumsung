@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -38,6 +39,15 @@ public class MasterRoom extends View implements View.OnTouchListener {
         this.context = context;
         setOnTouchListener(this);
         blocks = SpaceShip.loadMapFromFile("Player");
+    }
+
+    boolean hasControlBlock(){
+        for(Map.Entry<Point, Block> ent: blocks.entrySet()){
+            if(ent.getValue().getType() == 5){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -165,6 +175,12 @@ public class MasterRoom extends View implements View.OnTouchListener {
                     pos.y /= Block.size;
                     switch (mode) {
                         case push:
+                            if(chosenBlock.getType() == 5){
+                                if(hasControlBlock()){
+                                    Toast.makeText(context, "Уже есть контроллер", Toast.LENGTH_SHORT).show();
+                                    break;
+                                }
+                            }
                             Block bl = Block.parseBlock(chosenBlock.getType());
                             bl.rot = chosenBlock.rot;
                             try {

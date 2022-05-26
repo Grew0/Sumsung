@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     PlayerResources plRes = new PlayerResources();
@@ -44,7 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(masterRoom != null)masterRoom.stop();
+        if(masterRoom != null && nowChoose == viewsChoose.masterRoom){
+            if(masterRoom.hasControlBlock()){
+                masterRoom.stop();
+            }else{
+                Toast.makeText(this, "Вам нужно иметь хотя бы один контроллер", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
         if(mainGame != null && nowChoose == world){
             mainGame.stop();
             plRes.save(getPreferences(MODE_PRIVATE));

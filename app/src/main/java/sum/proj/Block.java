@@ -4,6 +4,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -22,7 +24,7 @@ public class Block {
 
     final static int size = 16;
     float mass = 10;
-    int hp=1000;
+    int max_hp=1000, hp=max_hp;
     int invincible_frames = 3;
     int invic_left = 0;
 
@@ -67,6 +69,13 @@ public class Block {
 
     void draw_rect_from_bitmap(int i, int j, float dx, float dy, Canvas canvas, Paint paint,
                                int cenx, int ceny, int ltx, int lty, int rbx, int rby) {
+
+        paint.setColorFilter(
+                new LightingColorFilter(
+                        Color.rgb(255, 150 + hp * 105 /max_hp, 150 + hp * 105 /max_hp),
+                        Color.rgb(0, 0, 0)));
+
+
         dx = (i - dx) * size;
         dy = (j - dy) * size;
         canvas.rotate(rot*90, dx+size/2, dy+size/2);

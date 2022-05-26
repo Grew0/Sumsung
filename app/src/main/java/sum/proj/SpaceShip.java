@@ -3,7 +3,11 @@ package sum.proj;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.util.Log;
 
 
@@ -87,10 +91,10 @@ public class SpaceShip {
         int shift_x = (int)(x-player.x), shift_y = (int)(y-player.y);
         canvas.translate(shift_x, shift_y);
 
-        Paint p = new Paint();
+        Paint p = new Paint(Paint.DITHER_FLAG);
+        p.setColor(Color.rgb(255, 0, 0));
         canvas.rotate(-angle);
 
-        p.setColor(Color.rgb(100, 100, 100));
         //Paint cirpaint = new Paint();
 
         //cirpaint.setColor(color_of_radius);

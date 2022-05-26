@@ -7,7 +7,13 @@ import java.util.TreeMap;
 
 public class Enemy extends SpaceShip{
     Enemy(){type = 'E';}
-    void attack(SpaceShip ship){}
+    void attack(SpaceShip ship){
+        if(mat != null)
+            for(int i=0;i<mat.length;i++)
+                for(int j=0;j<mat[i].length;j++)
+                    if(mat[i][j] != null)
+                        mat[i][j].is_activated = false;
+    }
 }
 
 class SimEnemy extends Enemy{
@@ -33,11 +39,6 @@ class SimEnemy extends Enemy{
 
     @Override
     void attack(SpaceShip ship) {
-        if(mat != null)
-            for(int i=0;i<mat.length;i++)
-                for(int j=0;j<mat[i].length;j++)
-                    if(mat[i][j] != null)
-                        mat[i][j].is_activated = false;
         try{
             super.attack(ship);
             mat[1][0].activate();
