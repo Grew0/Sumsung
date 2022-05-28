@@ -332,7 +332,6 @@ public class SpaceShip {
                                     float dx = x + xn,
                                             dy = y + yn;
                                     if(Round.Round_x_Round(bullet.x, bullet.y, 2, dx, dy, Block.size / 2)) {
-                                        Log.d("TAG", "YES");
                                         bullet.toDelete = true;
                                         return;
                                     }
